@@ -1,12 +1,45 @@
 var Todo = require('./models/todo');
 
+var Bookshelf = require('bookshelf');
+
+
+var knex = require('knex')({
+	client: 'postgresql',
+	connection: {
+		host     : '127.0.0.1',
+		port     : '5432',
+		user     : 'postgres',
+		password : 'root',
+		database : 'postgres',
+    charset  : 'utf8'
+    }
+});
+
+var bookshelf = require('bookshelf')(knex);
+
+var Todos = bookshelf.Model.extend({
+  tableName: 'todos'
+});
+
+
+//Todos.collection().fetch().then(function (collection) {
+  //console.log(collection);
+//});
+
+
 module.exports = function(app) {
 
 	// api ---------------------------------------------------------------------
 	// get all todos
 	app.get('/api/todos', function(req, res) {
-	console.log("GET Request Called " + Todo);
-	res.json(Todo['a']);
+	console.log("GET Request Called " + knex.select('Name').from('todos'));
+	//res.json(Todo['a']);
+
+	Todos.collection().fetch().then(function (collection) {
+	 console.log(collection['_byId']);
+	 res.json(collection);
+	});
+	//res.json(Todo['a']);
 		// use mongoose to get all todos in the database
 		//Todo.find(function(err, todos) {
 
